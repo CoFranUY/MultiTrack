@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, shrink-to-fit=no"
+    />
+    <meta name="description" content="Empresa de repuestos de elasticos" />
+    <meta name="Franco Brancato" content="MultiTrack" />
+
+    <title>MultiTrack</title>
+
+    <!-- CSS de Bootstrap -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC"
+      crossorigin="anonymous"
+    />
+
+    <!-- CSS Font Awesome -->
+    <link
+      rel="stylesheet"
+      href="https://use.fontawesome.com/releases/v5.7.2/css/all.css"
+      integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr"
+      crossorigin="anonymous"
+    />
+
+    <!-- CSS Google Fonts -->
+    <link
+      href="https://fonts.googleapis.com/css?family=Lato:300,400,700"
+      rel="stylesheet"
+      type="text/css"
+    />
+
+    <!-- CSS Propio -->
+    <link rel="stylesheet" href="css/styles.css" />
+  </head>
+
+  <body>
+    <nav id="header" class="navbar navbar-expand-md fixed-top navbar-dark">
+      <div class="container">
+        <a class="navbar-brand" href="index.html">
+          <img
+            id="header-logo"
+            src="img/logo_multitrack.jpg"
+            alt="MultiTrack_logo"
+          />
+        </a>
+        <button
+          class="navbar-toggler"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#links"
+          aria-controls="links"
+          aria-expanded="false"
+          aria-label="Toggle navigation"
+        >
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div id="links" class="collapse navbar-collapse justify-content-end">
+          <ul class="navbar-nav">
+            <li class="nav-item">
+              <a class="nav-link" href="ventas.html">Elasticos</a>
+            </li>
+
+            <li class="nav-item">
+              <a class="nav-link" href="sobre-nosotros.html">Sobre Nosotros</a>
+            </li>
+            <li class="nav-item">
+              <a
+                class="nav-link"
+                href="#"
+                data-bs-toggle="modal"
+                data-bs-target="#contacto-modal"
+                >Contacto</a
+              >
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+
+    <div id="sales">
+      <div class="container">
+        <div class="row">
+          <div class="col-6">
+            <h1>Elasticos</h1>
+          </div>
+          <div class="col-6">
+            <div id="rate" class="text-end">
+              <i class="fas fa-exchange-alt"></i> UYU/USD:
+              <strong>{{ exchangeRateUYU }}</strong>
+            </div>
+          </div>
+        </div>
+        <hr />
+        <div class="row">
+          <div class="col-md-3">
+            <div id="filter">
+              <h4>Filtro</h4>
+              <div class="mb-3">
+                <label for="select-year">Año</label>
+                <select
+                  id="select-year"
+                  class="form-select"
+                  name="year"
+                  v-model="yearSelected"
+                >
+                  <option value="">Seleccionar...</option>
+                  <option v-for="year in years" v-bind:value="year">
+                    {{ year }}
+                  </option>
+                </select>
+              </div>
+              <!-- /.mb-3 -->
+
+              <div class="mb-3">
+                <label for="select-brand">Marca</label>
+                <select
+                  id="select-brand"
+                  class="form-select"
+                  name="brand"
+                  v-model="brandSelected"
+                >
+                  <option value="">Seleccionar...</option>
+                  <option v-for="brand in brands" v-bind:value="brand">
+                    {{ brand }}
+                  </option>
+                </select>
+              </div>
+              <!-- /.mb-3 -->
+
+              <div class="mb-3">
+                <label for="select-model">Modelo</label>
+                <select
+                  id="select-model"
+                  class="form-select"
+                  name="model"
+                  v-model="modelSelected"
+                  v-bind:disabled="!models.length"
+                >
+                  <option value="">Seleccionar...</option>
+                  <option v-for="model in models" v-bind:value="model">
+                    {{ model }}
+                  </option>
+                </select>
+              </div>
+              <!-- /.mb-3 -->
+
+              <div class="mb-3">
+                <label for="select-status">Estado</label>
+                <select
+                  id="select-status"
+                  class="form-select"
+                  name="status"
+                  v-model="statusSelected"
+                >
+                  <option value="">Seleccionar...</option>
+                  <option value="1">Nuevo</option>
+                  <option value="0">Usado</option>
+                </select>
+              </div>
+              <!-- /.mb-3 -->
+
+              <button
+                id="btn-filter"
+                type="button"
+                name="button"
+                class="btn btn-warning btn-sm w-100"
+                :disabled="filtering"
+              >
+                <span v-show="!filtering"
+                  ><i class="fas fa-search"></i> Filtrar</span
+                >
+                <span v-show="filtering"
+                  >Filtrando <i class="fas fa-spinner fa-spin"></i
+                ></span>
+              </button>
+            </div>
+            <!-- /#filter -->
+
+            <button
+              id="btn-currency"
+              type="button"
+              name="button"
+              class="btn btn-outline-secondary w-100 btn-sm"
+            >
+              <i class="fas fa-dollar-sign"></i> Cambiar moneda
+            </button>
+          </div>
+
+          <div class="col-md-9">
+            <div
+              class="alert alert-warning hidden"
+              role="alert"
+              v-show="!cars.length"
+            >
+              Lo sentimos, no hay autos para el criterio de búsqueda
+              seleccionado.
+            </div>
+
+            <div class="car" v-for="car in cars">
+              <div class="row">
+                <div class="col-img col-lg-4">
+                  <div class="position-relative">
+                    <img
+                      v-bind:src="car.image"
+                      v-bind:alt="car.brand+' '+car.model"
+                    />
+                    <span class="badge" v-show="car.status === 1">Nuevo</span>
+                  </div>
+                </div>
+                <div class="col-lg-8">
+                  <div class="row">
+                    <div class="col-xl-6">
+                      <h3>{{ car.brand }} {{ car.model }}</h3>
+                    </div>
+
+                    <div class="col-xl-6">
+                      <div class="car-info">
+                        {{ car.year }} |
+                        <span v-show="currency === 'USD'">
+                          USD {{car.price_usd | thousands }}
+                        </span>
+                        <span v-show="currency === 'UYU'">
+                          UYU {{car.price_uyu | thousands }}
+                        </span>
+                        |
+                        <div class="rating">
+                          <i class="fas fa-star" v-for="n in (car.rating)"></i
+                          ><i
+                            class="far fa-star"
+                            v-for="n in (5-car.rating)"
+                          ></i>
+                        </div>
+                        <!-- /.rating -->
+                      </div>
+                      <!-- /.car-info -->
+                    </div>
+                  </div>
+
+                  <p class="car-description">{{ car.description }}</p>
+                  <div class="car-footer">
+                    <button
+                      type="button"
+                      name="button"
+                      class="btn btn-success btn-sm"
+                    >
+                      <i class="fas fa-shopping-cart"></i> Comprar
+                    </button>
+                    <button
+                      type="button"
+                      name="button"
+                      class="btn btn-outline-secondary btn-sm"
+                    >
+                      <i class="far fa-plus-square"></i> Más info<span
+                        >rmación</span
+                      >
+                    </button>
+                    <button
+                      type="button"
+                      name="button"
+                      class="btn btn-outline-secondary btn-sm"
+                    >
+                      <i class="far fa-share-square"></i> Compartir
+                    </button>
+                  </div>
+                  <!-- /.car-footer -->
+                </div>
+              </div>
+            </div>
+            <!-- /.car -->
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- /#sales -->
+
+    <div id="footer">
+      <div class="container">
+        <div class="row">
+          <div class="col-md-3">
+            <img
+              id="footer-logo"
+              src="img/logo_multitrack.jpg"
+              alt="MultiTrack_logo"
+            />
+          </div>
+
+          <div class="col-md-3">
+            <ul>
+              <li><a href="ventas.html">Elasticos</a></li>
+            </ul>
+          </div>
+
+          <div class="col-md-3">
+            <ul>
+              <li><a href="sobre-nosotros.html">Sobre Nosotros</a></li>
+              <li>
+                <a
+                  href="#"
+                  data-bs-toggle="modal"
+                  data-bs-target="#contacto-modal"
+                  >Contacto</a
+                >
+              </li>
+            </ul>
+          </div>
+
+          <div class="col-md-3">
+            <p style="color: #ddd">Copyright &copy; MultiTrack 2021</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div
+      id="contacto-modal"
+      class="modal fade"
+      tabindex="-1"
+      aria-labelledby="modal-title"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+          <!--
+              Para que el formulario funcione es necesario hacerse una cuenta
+              en Formspree: https://formspree.io.
+          -->
+          <form action="https://formspree.io/f/xzbwzejq"
+           method="POST" 
+           data-netlify-recaptcha="true"
+           data-netlify="true"
+           >
+            <div class="modal-header">
+              <h5 class="modal-title">Contacto</h5>
+              <button
+                type="button"
+                class="btn-close"
+                data-bs-dismiss="modal"
+                aria-label="Close"
+              ></button>
+            </div>
+            <div class="modal-body">
+              <div class="mb-3">
+                <label for="name" class="form-label">Nombre</label>
+                <input
+                  type="text"
+                  name="name"
+                  value=""
+                  class="form-control"
+                  placeholder="Ingresar nombre completo..."
+                />
+              </div>
+              <div class="mb-3">
+                <label for="email" class="form-label">Email</label>
+                <input
+                  type="email"
+                  name="email"
+                  value=""
+                  class="form-control"
+                  placeholder="Ingresar Email..."
+                />
+              </div>
+              <div class="mb-3">
+                <label for="message" class="form-label">Mensaje</label>
+                <textarea
+                  name="message"
+                  rows="8"
+                  cols="40"
+                  class="form-control"
+                  placeholder="Ingresar mensaje..."
+                ></textarea>
+              </div>
+            </div>
+            <div data-netlify-recaptcha="true"></div>
+            <div class="modal-footer">
+              <button type="submit" class="btn btn-success">Enviar</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+    <!-- /.modal -->
+
+    <!-- jQuery -->
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"
+      integrity="sha512-894YE6QWD5I59HgZOGReFYm4dnWc1Qt5NtvYSaNcOP+u1T9qYdvdihz0PPSiiqn/+/3e7Jo4EaG7TubfWGUrMQ=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    ></script>
+
+    <!-- Boostrap -->
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
+      crossorigin="anonymous"
+    ></script>
+
+    <!-- JS de Vue.js -->
+    <script src="https://cdn.jsdelivr.net/npm/vue"></script>
+
+    <!-- JS Propio -->
+    <script src="js/ventas.js"></script>
+  </body>
+</html>
